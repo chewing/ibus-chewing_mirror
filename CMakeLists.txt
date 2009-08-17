@@ -8,7 +8,7 @@ INCLUDE(init.CMakeLists.txt)
 # Project basic information
 ####################################################################
 PROJECT(ibus-chewing)
-SET(PROJECT_DESCRIPTION chewing Chinese IME for iBus)
+SET(PROJECT_SUMMART Chewing Chinese input method for IBus)
 SET(CMAKE_C_FLAGS "-Wall")
 
 SET(RELEASE_FILE ${CMAKE_SOURCE_DIR}/RELEASE-NOTES.txt)
@@ -45,7 +45,7 @@ ENDIF(${NEED_RPM_RELEASE_INFO})
 #==================================================================
 # Developer setting.
 #
-SET(CVS_DIST_TAGS F-10 F-11)
+#SET(CVS_DIST_TAGS F-10 F-11)
 SET(HOSTING_SERVICE_PROVIDER "GitHub")
 SET(DEVELOPER_SETTING_FILE "DEVELOPER_SETTING_NO_PACK")
 SET(DEVELOPER_DEPENDS UploadPkg.batch.in)
@@ -91,8 +91,16 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/data/chewing.xml.in ${CMAKE_BINARY_DIR}/data/
 FIND_PACKAGE(PkgConfig)
 PKG_CHECK_MODULES(GTK2 REQUIRED gtk+-2.0)
 PKG_CHECK_MODULES(IBUS REQUIRED ibus-1.0)
-PKG_CHECK_MODULES(X11 REQUIRED x11)
-PKG_CHECK_MODULES(XTST REQUIRED xtst)
+STRING(REGEX MATCH "[1-9][0-9]*\.[1-9][0-9]*" IBUS_MAJOR_VERSION  "${IBUS_VERSION}")
+MESSAGE("IBUS version ${IBUS_VERSION} major version ${IBUS_MAJOR_VERSION}")
+IF ( "${IBUS_MAJOR_VERSION}" = "1.1" )
+    MESSAGE("IBUS version 1.1 detected!")
+    ADD_DEFINITIONS(-DIBUS1_1)
+ELSE()
+    MESSAGE("IBUS compatible version: ${IBUS_MAJOR_VERSION}")
+ENDIF()
+#PKG_CHECK_MODULES(X11 REQUIRED x11)
+#PKG_CHECK_MODULES(XTST REQUIRED xtst)
 
 PKG_CHECK_MODULES(CHEWING chewing>=0.3.2)
 COMMAND_OUTPUT_TO_VARIABLE(CHEWING_DATADIR ${PKG_CONFIG_EXECUTABLE} --variable=datadir chewing)
@@ -100,7 +108,7 @@ ADD_DEFINITIONS(-DCHEWING_DATADIR='"${CHEWING_DATADIR}"')
 
 FIND_PROGRAM(GOB2 gob2)
 IF(${GOB2} STREQUAL "GOB2-NOTFOUND")
-    MESSAGE(FATAL_ERROR "gob2 not found, install gob2 please.")
+    MESSAGE(FATAL_ERROR "gob2 not found, install gob2 (GObject Builder) please.")
 ENDIF()
 
 ####################################################################

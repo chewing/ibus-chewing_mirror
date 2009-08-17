@@ -623,14 +623,13 @@ class IBus:Chewing:Engine from IBus:Engine{
     }
 
     override (IBus:Engine) gboolean
-    process_key_event(IBus:Engine *engine, guint keyval_ignore, guint  keycode,  guint  modifiers){
+    process_key_event(IBus:Engine *engine, guint keyval,  guint  modifiers){
 	Self *self=SELF(engine);
 	gboolean result=TRUE;
 	if (modifiers & IBUS_RELEASE_MASK){
 	    /* Skip release event */
 	    return TRUE;
 	}
-	guint keyval=ibus_keymap_lookup_keysym (self->keymap_us,keycode,modifiers);
 
 	G_DEBUG_MSG(3,"*** process_key_event(-, %u(%s), %u) ... proceed.",keyval, keyName_get(keyval), modifiers);
 	guint state= modifiers & (IBUS_SHIFT_MASK | IBUS_CONTROL_MASK | IBUS_MOD1_MASK);
